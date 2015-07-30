@@ -149,14 +149,14 @@
 
       sanitizeExtrema: (options) ->
         for extremum in ['min', 'max']
-          value = this.getSanitizedNumber(options[extremum])
+          value = this.sanitizeNumber(options[extremum])
           if value?
             options[extremum] = value
           else
             $log.warn("Invalid #{extremum} value '#{value}', deleting it.")
             delete options[extremum]
 
-      getSanitizedNumber: (value) ->
+      sanitizeNumber: (value) ->
         return undefined unless value?
 
         number = parseFloat(value)
@@ -172,7 +172,7 @@
         options.type or= 'linear'
 
         if options.ticksRotate?
-          options.ticksRotate = this.getSanitizedNumber(options.ticksRotate)
+          options.ticksRotate = this.sanitizeNumber(options.ticksRotate)
 
         # labelFunction is deprecated and will be remvoed in 2.x
         # please use ticksFormatter instead
@@ -206,7 +206,7 @@
             options.tooltipFormatter = d3.format(options.tooltipFormat)
         
         if options.ticksInterval?
-          options.ticksInterval = this.getSanitizedNumber(options.ticksInterval)
+          options.ticksInterval = this.sanitizeNumber(options.ticksInterval)
 
         this.sanitizeExtrema(options)
 
