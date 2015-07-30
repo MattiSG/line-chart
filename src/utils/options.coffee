@@ -148,19 +148,13 @@
         return axesOptions
 
       sanitizeExtrema: (options) ->
-        min = this.getSanitizedNumber(options.min)
-        if min?
-          options.min = min
-        else
-          $log.warn("Invalid minimum value '#{value}', deleting it.")
-          delete options.min
-
-        max = this.getSanitizedNumber(options.max)
-        if max?
-          options.max = max
-        else
-          $log.warn("Invalid maximum value '#{value}', deleting it.")
-          delete options.max
+        for extremum in ['min', 'max']
+          value = this.getSanitizedNumber(options[extremum])
+          if value?
+            options[extremum] = value
+          else
+            $log.warn("Invalid #{extremum} value '#{value}', deleting it.")
+            delete options[extremum]
 
       getSanitizedNumber: (value) ->
         return undefined unless value?
