@@ -288,6 +288,28 @@ describe 'options', ->
       expect(computed).to.eql(expected)
       expect($log.warn.callCount).to.equal(1)
 
+    it 'should not log a warning if no values are given as extrema', inject ($log) ->
+      sinon.stub($log, 'warn', ->)
+
+      expected =
+        x:
+          type: 'linear'
+          key: 'x'
+        y:
+          type: 'linear'
+          max: 15
+
+      computed = n3utils.sanitizeOptions(
+        tooltip: {mode: 'axes', interpolate: false}
+        lineMode: 'linear'
+        axes:
+          y:
+            max: 15
+      ).axes
+
+      expect(computed).to.eql(expected)
+      expect($log.warn.callCount).to.equal(0)
+
     it 'should parse extrema options as floats', inject ($log) ->
       sinon.stub($log, 'warn', ->)
 
