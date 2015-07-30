@@ -366,6 +366,98 @@ describe 'options', ->
       expect(computed.y.ticksRotate).to.equal(40.25)
       expect(computed.y2.ticksRotate).to.equal(-45.00)
 
+    describe 'of type date', ->
+      min = new Date('2015-01-01')
+      max = new Date('2016-01-01')
+
+      it 'should allow x axes extrema configuration', ->
+        expected =
+          x:
+            type: 'date'
+            key: 'x'
+            min: min
+            max: max
+          y:
+            type: 'linear'
+
+        computed = n3utils.sanitizeOptions(
+          tooltip: {mode: 'axes', interpolate: false}
+          axes:
+            x:
+              type: 'date'
+              min: min
+              max: max
+        ).axes
+
+        expect(computed).to.eql(expected)
+
+      it 'should allow y axes extrema configuration', ->
+        expected =
+          x:
+            type: 'linear'
+            key: 'x'
+          y:
+            type: 'date'
+            min: min
+            max: max
+
+        computed = n3utils.sanitizeOptions(
+          tooltip: {mode: 'axes', interpolate: false}
+          axes:
+            y:
+              type: 'date'
+              min: min
+              max: max
+        ).axes
+
+        expect(computed).to.eql(expected)
+
+      it 'should log a warning if non date value given as minimum', inject ($log) ->
+        sinon.stub($log, 'warn', ->)
+
+        expected =
+          x:
+            type: 'linear'
+            key: 'x'
+          y:
+            type: 'date'
+            max: max
+
+        computed = n3utils.sanitizeOptions(
+          tooltip: {mode: 'axes', interpolate: false}
+          axes:
+            y:
+              type: 'date'
+              min: 'pouet'
+              max: max
+        ).axes
+
+        expect(computed).to.eql(expected)
+        expect($log.warn.callCount).to.equal(1)
+
+      it 'should log a warning if non date value given as maximum', inject ($log) ->
+        sinon.stub($log, 'warn', ->)
+
+        expected =
+          x:
+            type: 'linear'
+            key: 'x'
+          y:
+            type: 'date'
+            min: min
+
+        computed = n3utils.sanitizeOptions(
+          tooltip: {mode: 'axes', interpolate: false}
+          axes:
+            y:
+              type: 'date'
+              min: min
+              max: 'pouet'
+        ).axes
+
+        expect(computed).to.eql(expected)
+        expect($log.warn.callCount).to.equal(1)
+
   describe 'series', ->
     it 'should throw an error if twice the same id is found', ->
       expect(->n3utils.sanitizeSeriesOptions([
