@@ -148,13 +148,26 @@
         return axesOptions
 
       sanitizeExtrema: (options) ->
+        sanitizer = this.sanitizeNumber
+
+        if options.type == 'date'
+          sanitizer = this.sanitizeDate
+
         for extremum in ['min', 'max']
-          value = this.sanitizeNumber(options[extremum])
+          value = sanitizer(options[extremum])
           if value?
             options[extremum] = value
           else
             $log.warn("Invalid #{extremum} value '#{value}', deleting it.")
             delete options[extremum]
+
+      sanitizeDate: (value) ->
+        return undefined unless value?
+
+        if ! value instanceof Date || isNaN(value.valueOf()) # see http://stackoverflow.com/questions/10589732
+          return undefined
+
+        return value
 
       sanitizeNumber: (value) ->
         return undefined unless value?

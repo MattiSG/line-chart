@@ -1,6 +1,6 @@
 
 /*
-line-chart - v1.1.10 - 03 July 2015
+line-chart - v1.1.10 - 30 July 2015
 https://github.com/n3-charts/line-chart
 Copyright (c) 2015 n3-charts
  */
@@ -1131,28 +1131,41 @@ mod.factory('n3utils', [
         return axesOptions;
       },
       sanitizeExtrema: function(options) {
-        var max, min;
-        min = this.getSanitizedNumber(options.min);
-        if (min != null) {
-          options.min = min;
-        } else {
-          delete options.min;
+        var extremum, sanitizer, value, _i, _len, _ref, _results;
+        sanitizer = this.sanitizeNumber;
+        if (options.type === 'date') {
+          sanitizer = this.sanitizeDate;
         }
-        max = this.getSanitizedNumber(options.max);
-        if (max != null) {
-          return options.max = max;
-        } else {
-          return delete options.max;
+        _ref = ['min', 'max'];
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          extremum = _ref[_i];
+          value = sanitizer(options[extremum]);
+          if (value != null) {
+            _results.push(options[extremum] = value);
+          } else {
+            $log.warn("Invalid " + extremum + " value '" + value + "', deleting it.");
+            _results.push(delete options[extremum]);
+          }
         }
+        return _results;
       },
-      getSanitizedNumber: function(value) {
+      sanitizeDate: function(value) {
+        if (value == null) {
+          return void 0;
+        }
+        if (!value instanceof Date || isNaN(value.valueOf())) {
+          return void 0;
+        }
+        return value;
+      },
+      sanitizeNumber: function(value) {
         var number;
         if (value == null) {
           return void 0;
         }
         number = parseFloat(value);
         if (isNaN(number)) {
-          $log.warn("Invalid extremum value : " + value + ", deleting it.");
           return void 0;
         }
         return number;
@@ -1165,7 +1178,7 @@ mod.factory('n3utils', [
         }
         options.type || (options.type = 'linear');
         if (options.ticksRotate != null) {
-          options.ticksRotate = this.getSanitizedNumber(options.ticksRotate);
+          options.ticksRotate = this.sanitizeNumber(options.ticksRotate);
         }
         if (options.labelFunction != null) {
           options.ticksFormatter = options.labelFunction;
@@ -1188,7 +1201,7 @@ mod.factory('n3utils', [
           }
         }
         if (options.ticksInterval != null) {
-          options.ticksInterval = this.getSanitizedNumber(options.ticksInterval);
+          options.ticksInterval = this.sanitizeNumber(options.ticksInterval);
         }
         this.sanitizeExtrema(options);
         return options;
