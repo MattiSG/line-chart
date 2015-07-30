@@ -285,7 +285,7 @@ describe 'options', ->
             max: 15
       ).axes
 
-      expect(computed).to.eql(expected)
+      expect(computed.y.min).to.equal(expected.y.min)
       expect($log.warn.callCount).to.equal(1)
 
     it 'should not log a warning if no values are given as extrema', inject ($log) ->
@@ -454,7 +454,7 @@ describe 'options', ->
               max: max
         ).axes
 
-        expect(computed).to.eql(expected)
+        expect(computed.y.min).to.equal(expected.y.min)
         expect($log.warn.callCount).to.equal(1)
 
       it 'should log a warning if non date value given as maximum', inject ($log) ->
@@ -477,7 +477,7 @@ describe 'options', ->
               max: 'pouet'
         ).axes
 
-        expect(computed).to.eql(expected)
+        expect(computed.y.max).to.equal(expected.y.max)
         expect($log.warn.callCount).to.equal(1)
 
   describe 'series', ->
