@@ -30,11 +30,11 @@
         options.axes = this.sanitizeAxes(options.axes, this.haveSecondYAxis(options.series))
         options.tooltip = this.sanitizeTooltip(options.tooltip)
         options.margin = this.sanitizeMargins(options.margin)
-        
+
         options.lineMode or= this.getDefaultOptions().lineMode
         options.tension = if /^\d+(\.\d+)?$/.test(options.tension) then options.tension \
           else this.getDefaultOptions().tension
-        
+
         options.drawLegend = options.drawLegend isnt false
         options.drawDots = options.drawDots isnt false
         options.columnsHGap = 5 unless angular.isNumber(options.columnsHGap)
@@ -147,19 +147,22 @@
 
         return axesOptions
 
-      sanitizeExtrema: (options) ->
+      sanitizeExtrema: (axisOptions) ->
+        for extremum in ['min', 'max']
+          originalValue = axisOptions[extremum]
+          if originalValue?
+            axisOptions[extremum] = this.sanitizeExtremum(extremum, axisOptions)
+
+            if ! axisOptions[extremum]?
+              $log.warn("Invalid #{extremum} value '#{originalValue}' (parsed as #{axisOptions[extremum]}), ignoring it.")
+
+      sanitizeExtremum: (name, axisOptions) ->
         sanitizer = this.sanitizeNumber
 
-        if options.type == 'date'
+        if axisOptions.type == 'date'
           sanitizer = this.sanitizeDate
 
-        for extremum in ['min', 'max']
-          value = sanitizer(options[extremum])
-          if value?
-            options[extremum] = value
-          else
-            $log.warn("Invalid #{extremum} value '#{options[extremum]}' (parsed as #{value}), deleting it.")
-            delete options[extremum]
+        return sanitizer(axisOptions[name])
 
       sanitizeDate: (value) ->
         return undefined unless value?
@@ -198,7 +201,7 @@
           if options.type is 'date'
             # Use d3.time.format as formatter
             options.ticksFormatter = d3.time.format(options.ticksFormat)
-            
+
           else
             # Use d3.format as formatter
             options.ticksFormatter = d3.format(options.ticksFormat)
@@ -213,11 +216,11 @@
           if options.type is 'date'
             # Use d3.time.format as formatter
             options.tooltipFormatter = d3.time.format(options.tooltipFormat)
-            
+
           else
             # Use d3.format as formatter
             options.tooltipFormatter = d3.format(options.tooltipFormat)
-        
+
         if options.ticksInterval?
           options.ticksInterval = this.sanitizeNumber(options.ticksInterval)
 

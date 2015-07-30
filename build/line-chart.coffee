@@ -1105,19 +1105,22 @@ mod.factory('n3utils', ['$window', '$log', '$rootScope', ($window, $log, $rootSc
 
         return axesOptions
 
-      sanitizeExtrema: (options) ->
+      sanitizeExtrema: (axisOptions) ->
+        for extremum in ['min', 'max']
+          originalValue = axisOptions[extremum]
+          if originalValue?
+            axisOptions[extremum] = this.sanitizeExtremum(extremum, axisOptions)
+
+            if ! axisOptions[extremum]?
+              $log.warn("Invalid #{extremum} value '#{originalValue}' (parsed as #{axisOptions[extremum]}), ignoring it.")
+
+      sanitizeExtremum: (name, axisOptions) ->
         sanitizer = this.sanitizeNumber
 
-        if options.type == 'date'
+        if axisOptions.type == 'date'
           sanitizer = this.sanitizeDate
 
-        for extremum in ['min', 'max']
-          value = sanitizer(options[extremum])
-          if value?
-            options[extremum] = value
-          else
-            $log.warn("Invalid #{extremum} value '#{options[extremum]}' (parsed as #{value}), deleting it.")
-            delete options[extremum]
+        return sanitizer(axisOptions[name])
 
       sanitizeDate: (value) ->
         return undefined unless value?

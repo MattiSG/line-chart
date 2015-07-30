@@ -1130,25 +1130,33 @@ mod.factory('n3utils', [
         }
         return axesOptions;
       },
-      sanitizeExtrema: function(options) {
-        var extremum, sanitizer, value, _i, _len, _ref, _results;
-        sanitizer = this.sanitizeNumber;
-        if (options.type === 'date') {
-          sanitizer = this.sanitizeDate;
-        }
+      sanitizeExtrema: function(axisOptions) {
+        var extremum, originalValue, _i, _len, _ref, _results;
         _ref = ['min', 'max'];
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           extremum = _ref[_i];
-          value = sanitizer(options[extremum]);
-          if (value != null) {
-            _results.push(options[extremum] = value);
+          originalValue = axisOptions[extremum];
+          if (originalValue != null) {
+            axisOptions[extremum] = this.sanitizeExtremum(extremum, axisOptions);
+            if (axisOptions[extremum] == null) {
+              _results.push($log.warn("Invalid " + extremum + " value '" + originalValue + "' (parsed as " + axisOptions[extremum] + "), ignoring it."));
+            } else {
+              _results.push(void 0);
+            }
           } else {
-            $log.warn("Invalid " + extremum + " value '" + options[extremum] + "' (parsed as " + value + "), deleting it.");
-            _results.push(delete options[extremum]);
+            _results.push(void 0);
           }
         }
         return _results;
+      },
+      sanitizeExtremum: function(name, axisOptions) {
+        var sanitizer;
+        sanitizer = this.sanitizeNumber;
+        if (axisOptions.type === 'date') {
+          sanitizer = this.sanitizeDate;
+        }
+        return sanitizer(axisOptions[name]);
       },
       sanitizeDate: function(value) {
         if (value == null) {
