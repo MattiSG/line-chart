@@ -1116,7 +1116,7 @@ mod.factory('n3utils', ['$window', '$log', '$rootScope', ($window, $log, $rootSc
           if value?
             options[extremum] = value
           else
-            $log.warn("Invalid #{extremum} value '#{value}', deleting it.")
+            $log.warn("Invalid #{extremum} value '#{options[extremum]}' (parsed as #{value}), deleting it.")
             delete options[extremum]
 
       sanitizeDate: (value) ->

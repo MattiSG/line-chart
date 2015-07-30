@@ -1144,7 +1144,7 @@ mod.factory('n3utils', [
           if (value != null) {
             _results.push(options[extremum] = value);
           } else {
-            $log.warn("Invalid " + extremum + " value '" + value + "', deleting it.");
+            $log.warn("Invalid " + extremum + " value '" + options[extremum] + "' (parsed as " + value + "), deleting it.");
             _results.push(delete options[extremum]);
           }
         }
