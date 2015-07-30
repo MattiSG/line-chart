@@ -152,12 +152,14 @@
         if min?
           options.min = min
         else
+          $log.warn("Invalid minimum value '#{value}', deleting it.")
           delete options.min
 
         max = this.getSanitizedNumber(options.max)
         if max?
           options.max = max
         else
+          $log.warn("Invalid maximum value '#{value}', deleting it.")
           delete options.max
 
       getSanitizedNumber: (value) ->
@@ -166,7 +168,6 @@
         number = parseFloat(value)
 
         if isNaN(number)
-          $log.warn("Invalid extremum value : #{value}, deleting it.")
           return undefined
 
         return number
