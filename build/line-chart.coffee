@@ -1125,7 +1125,7 @@ mod.factory('n3utils', ['$window', '$log', '$rootScope', ($window, $log, $rootSc
       sanitizeDate: (value) ->
         return undefined unless value?
 
-        if ! value instanceof Date || isNaN(value.valueOf()) # see http://stackoverflow.com/questions/10589732
+        if ! (value instanceof Date) || isNaN(value.valueOf()) # see http://stackoverflow.com/questions/10589732
           return undefined
 
         return value

@@ -1162,7 +1162,7 @@ mod.factory('n3utils', [
         if (value == null) {
           return void 0;
         }
-        if (!value instanceof Date || isNaN(value.valueOf())) {
+        if (!(value instanceof Date) || isNaN(value.valueOf())) {
           return void 0;
         }
         return value;
